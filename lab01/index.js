@@ -5,6 +5,7 @@ const len = 100
 const tMax = 500
 let t = 0
 
+// TODO non-line figure move non-linear trajectory
 function update() {
     context.fillStyle = '#FF6677'
     context.clearRect(0, 0, canvas.width, canvas.height)
