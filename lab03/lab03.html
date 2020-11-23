@@ -5,15 +5,21 @@
 </canvas>
 <script>
     function drawLine(idata, x0, y0, x1, y1) {
+        if (x0 > x1 && y0 > y1) {
+            [x0, x1] = [x1, x0];
+            [y0, y1] = [y1, y0];
+        }
+
         let y = y0;
         let eps = 0;
         const k = 2 * (y1 - y0);
-        const pw = 1;
+
         for (let x = x0; x <= x1; x++) {
-            idata.data[(x + y * idata.width) * 4 + 3] = 255 *
-                Math.pow(Math.abs(0.5 - (eps / (2 * (x1 - x0)))), pw);
-            idata.data[(x + (y + 1) * idata.width) * 4 + 3] = 255 *
-                Math.pow(Math.abs(0.5 + (eps / (2 * (x1 - x0)))), pw);
+            let Q = 255 * Math.abs(0.5 - (eps / (2 * (x1 - x0))));
+            let P = 255 * Math.abs(0.5 + (eps / (2 * (x1 - x0))));
+
+            idata.data[(x + y * idata.width) * 4 + 3] = Q;
+            idata.data[(x + (y + 1) * idata.width) * 4 + 3] = P;
             eps = eps + k;
 
             if (eps > (x1 - x0)) {
@@ -43,15 +49,15 @@
 
             // Для удобства, сразу показываем начальную точку
             ctx.fillRect(x0, y0, 2, 2)
-
             return
         }
 
         x1 = event.offsetX;
         y1 = event.offsetY;
+        hasBeginPointSet = false;
+
         drawLine(idata, x0, y0, x1, y1);
         ctx.putImageData(idata, 0, 0);
-        hasBeginPointSet = false;
     });
 </script>
 </BODY>
