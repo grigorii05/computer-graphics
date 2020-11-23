@@ -1,27 +1,32 @@
 const canvas = document.getElementById('canvas')
 const context = canvas.getContext('2d')
+context.fillStyle = '#ff6600'
 
-const len = 100
+
+const len = 50
 const tMax = 500
-let t = 0
+const amplitude = 15
+const phases = 0.1
 
-// TODO non-line figure move non-linear trajectory
+let x = 0
+
 function update() {
-    context.fillStyle = '#FF6677'
     context.clearRect(0, 0, canvas.width, canvas.height)
 
+    const y = Math.sin(x * phases) * amplitude
+
     for (let i = 0; i < len; i++) {
-        context.fillRect(10 + i + t, 10 + i, 10, 1)
+        context.fillRect(x + i + 10, y + i + 25, 5, 1)
+        context.fillRect(x - i + 10, y + i + 25, 5, 1)
+        context.fillRect(x + i + 10, y + len - i + 25, 5, 1)
+        context.fillRect(x - i + 10, y + len - i + 25, 5, 1)
     }
 
-    if (t > tMax)
-        t = 0
-    else
-        t++
+    if (x <= tMax - len) {
+        x++
+    } else {
+        x = 0
+    }
 }
 
-setInterval(update, 1)
-
-setTimeout(() => {
-    t = 0
-}, 1)
+setInterval(update, 10)
