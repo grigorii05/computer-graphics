@@ -5,57 +5,58 @@
 </canvas>
 
 <script>
-    class PolarDot2D {
-        constructor(rad, ang, vel, size, foo) {
-            this.rad = rad;
-            this.ang = ang;
-            this.angVel = vel;
-            this.size = size;
-            this.foo = foo;
+    class Spiral {
+        constructor(context, offsetX, offsetY, vel, size, color, foo) {
+            this.rad = 0
+            this.ang = 0
+            this.context = context
+            this.offsetX = offsetX
+            this.offsetY = offsetY
+            this.angVel = vel
+            this.size = size
+            this.color = color
+            this.foo = foo
         }
 
         update() {
-            this.ang += this.angVel;
-            this.rad = this.foo(this.ang);
-        }
+            this.context.fillStyle = this.color
+            let x = this.offsetX + this.cartesianX()
+            let y = this.offsetY + this.cartesianY()
+            this.context.fillRect(x, y, this.size, this.size)
 
-        draw(context, offsetX, offsetY) {
-            context.fillRect(offsetX + this.cartesianX(),
-                offsetY + this.cartesianY(),
-                this.size, this.size);
+            this.ang += this.angVel
+            this.rad = this.foo(this.ang)
         }
 
         cartesianX() {
-            return this.rad * Math.cos(this.ang);
+            return this.rad * Math.cos(this.ang)
         }
 
         cartesianY() {
-            return this.rad * Math.sin(this.ang);
+            return this.rad * Math.sin(this.ang)
         }
     }
 
     function polarRose(angle, scale = 1, n = 1, d = 2) {
-        return Math.sin(angle * n / d) * scale;
+        return Math.sin(angle * n / d) * scale
     }
 
 
-    let canvas = document.getElementById('canv');
-    let context = canvas.getContext('2d');
+    const canvas = document.getElementById('canv')
+    const context = canvas.getContext('2d')
 
-    let dots = [new PolarDot2D(0, 0, 0.005, 5, angle => polarRose(angle, 100, 5, 6)),
-        new PolarDot2D(0, 0, 0.005, 5, angle => polarRose(angle, 200, 5, 6)),
+    const offsetX = canvas.width / 2;
+    const offsetY = canvas.height / 2;
+
+    const dots = [
+        new Spiral(context, offsetX, offsetY, 0.005, 5, '#a600ff', angle => polarRose(angle, 100, 5, 6)),
+        new Spiral(context, offsetX, offsetY, 0.005, 5, '#00FFFF', angle => polarRose(angle, 200, 5, 6)),
     ];
-    let colors = ['#00FFFF', '#00FF44',];
 
-    context.fillStyle = '#000000';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    setInterval(() => {
-        for (let i = dots.length - 1; i >= 0; --i) {
-            context.fillStyle = colors[i];
-            dots[i].draw(context, canvas.width / 2, canvas.height / 2);
-            dots[i].update();
-        }
-    }, 1);
+    context.fillStyle = '#000000'
+    context.fillRect(0, 0, canvas.width, canvas.height)
+
+    setInterval(() => dots.forEach(it => it.update()), 1)
 </script>
 
 </BODY>
