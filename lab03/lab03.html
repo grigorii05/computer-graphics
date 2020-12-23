@@ -48,15 +48,24 @@
     const offsetX = canvas.width / 2;
     const offsetY = canvas.height / 2;
 
-    const dots = [
-        new Spiral(context, offsetX, offsetY, 0.005, 5, '#a600ff', angle => polarRose(angle, 100, 5, 6)),
-        new Spiral(context, offsetX, offsetY, 0.005, 5, '#00FFFF', angle => polarRose(angle, 200, 5, 6)),
-    ];
+    const baseSpiral = new Spiral(context, offsetX, offsetY, 0.005, 5, '#F00000', _ => _)
+
+    const spiral1 = Object.assign({}, baseSpiral)
+    spiral1.__proto__ = baseSpiral
+    spiral1.color = '#a600ff'
+    spiral1.foo = angle => polarRose(angle, 100, 5, 6)
+
+    const spiral2 = Object.assign({}, baseSpiral)
+    spiral2.__proto__ = baseSpiral
+    spiral2.color = '#00FFFF'
+    spiral2.foo = angle => polarRose(angle, 200, 5, 6)
+
+    const spirals = [spiral1, spiral2,];
 
     context.fillStyle = '#000000'
     context.fillRect(0, 0, canvas.width, canvas.height)
 
-    setInterval(() => dots.forEach(it => it.update()), 1)
+    setInterval(() => spirals.forEach(it => it.update()), 1)
 </script>
 
 </BODY>
