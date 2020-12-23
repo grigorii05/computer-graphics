@@ -6,7 +6,7 @@
 
 <script>
     class Spiral {
-        constructor(context, offsetX, offsetY, vel, size, color, foo) {
+        constructor(context, offsetX, offsetY, vel, size) {
             this.rad = 0
             this.ang = 0
             this.context = context
@@ -14,8 +14,8 @@
             this.offsetY = offsetY
             this.angVel = vel
             this.size = size
-            this.color = color
-            this.foo = foo
+            this.color = '#F00000'
+            this.foo = _ => _
         }
 
         update() {
@@ -41,22 +41,19 @@
         return Math.sin(angle * n / d) * scale
     }
 
-
     const canvas = document.getElementById('canv')
     const context = canvas.getContext('2d')
 
     const offsetX = canvas.width / 2;
     const offsetY = canvas.height / 2;
 
-    const baseSpiral = new Spiral(context, offsetX, offsetY, 0.005, 5, '#F00000', _ => _)
+    const baseSpiral = new Spiral(context, offsetX, offsetY, 0.005, 5)
 
-    const spiral1 = Object.assign({}, baseSpiral)
-    spiral1.__proto__ = baseSpiral
+    const spiral1 = Object.create(baseSpiral)
     spiral1.color = '#a600ff'
     spiral1.foo = angle => polarRose(angle, 100, 5, 6)
 
-    const spiral2 = Object.assign({}, baseSpiral)
-    spiral2.__proto__ = baseSpiral
+    const spiral2 = Object.create(baseSpiral)
     spiral2.color = '#00FFFF'
     spiral2.foo = angle => polarRose(angle, 200, 5, 6)
 
