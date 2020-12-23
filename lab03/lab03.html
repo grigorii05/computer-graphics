@@ -1,64 +1,62 @@
-<!DOCTYPE html>
 <HTML lang="en">
 <BODY>
-<canvas id="lab03" width="500" height="400" style="background-color: antiquewhite">
+
+<canvas id='canv' width='1000' height='1000' style='border:1px solid'>
 </canvas>
+
 <script>
-    function drawLine(idata, x0, y0, x1, y1) {
-        if (x0 > x1 && y0 > y1) {
-            [x0, x1] = [x1, x0];
-            [y0, y1] = [y1, y0];
+    class PolarDot2D {
+        constructor(rad, ang, vel, size, foo) {
+            this.rad = rad;
+            this.ang = ang;
+            this.angVel = vel;
+            this.size = size;
+            this.foo = foo;
         }
 
-        let y = y0;
-        let eps = 0;
-        const k = 2 * (y1 - y0);
+        update() {
+            this.ang += this.angVel;
+            this.rad = this.foo(this.ang);
+        }
 
-        for (let x = x0; x <= x1; x++) {
-            let Q = 255 * Math.abs(0.5 - (eps / (2 * (x1 - x0))));
-            let P = 255 * Math.abs(0.5 + (eps / (2 * (x1 - x0))));
+        draw(context, offsetX, offsetY) {
+            context.fillRect(offsetX + this.cartesianX(),
+                offsetY + this.cartesianY(),
+                this.size, this.size);
+        }
 
-            idata.data[(x + y * idata.width) * 4 + 3] = Q;
-            idata.data[(x + (y + 1) * idata.width) * 4 + 3] = P;
-            eps = eps + k;
+        cartesianX() {
+            return this.rad * Math.cos(this.ang);
+        }
 
-            if (eps > (x1 - x0)) {
-                y++;
-                eps = eps - 2 * (x1 - x0);
-            }
+        cartesianY() {
+            return this.rad * Math.sin(this.ang);
         }
     }
-</script>
-<script>
-    const canvas = document.getElementById("lab03");
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = '#000000'
-    const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    let hasBeginPointSet = false;
-    let x0;
-    let y0;
-    let x1;
-    let y1;
+    function polarRose(angle, scale = 1, n = 1, d = 2) {
+        return Math.sin(angle * n / d) * scale;
+    }
 
-    canvas.addEventListener("click", event => {
-        if (!hasBeginPointSet) {
-            x0 = event.offsetX;
-            y0 = event.offsetY;
-            hasBeginPointSet = true;
 
-            // Для удобства, сразу показываем начальную точку
-            ctx.fillRect(x0, y0, 2, 2)
-            return
+    let canvas = document.getElementById('canv');
+    let context = canvas.getContext('2d');
+
+    let dots = [new PolarDot2D(0, 0, 0.005, 5, angle => polarRose(angle, 100, 5, 6)),
+        new PolarDot2D(0, 0, 0.005, 5, angle => polarRose(angle, 200, 5, 6)),
+    ];
+    let colors = ['#00FFFF', '#00FF44',];
+
+    context.fillStyle = '#000000';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    setInterval(() => {
+        for (let i = dots.length - 1; i >= 0; --i) {
+            context.fillStyle = colors[i];
+            dots[i].draw(context, canvas.width / 2, canvas.height / 2);
+            dots[i].update();
         }
-
-        x1 = event.offsetX;
-        y1 = event.offsetY;
-        hasBeginPointSet = false;
-
-        drawLine(idata, x0, y0, x1, y1);
-        ctx.putImageData(idata, 0, 0);
-    });
+    }, 1);
 </script>
+
 </BODY>
 </HTML>
